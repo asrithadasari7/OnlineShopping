@@ -1,0 +1,252 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Cart - ElectroMart</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
+        }
+
+        body {
+            margin: 0;
+            padding: 25px;
+            background: #f3f6fc;
+            color: #172554;
+        }
+
+        h1 {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .cart-box {
+            background: white;
+            padding: 25px;
+            margin: auto;
+            max-width: 950px;
+            border-radius: 12px;
+            box-shadow: 0 3px 12px #ddd;
+        }
+
+        .cart-item {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            padding: 18px 0;
+            border-bottom: 1px solid #ddd;
+            flex-wrap: wrap;
+        }
+
+        .cart-item img {
+            width: 110px;
+            height: 100px;
+            object-fit: contain;
+            border-radius: 8px;
+            background: #f8fafc;
+        }
+
+        .item-details {
+            flex: 1;
+            min-width: 150px;
+        }
+
+        .item-details h3 {
+            margin: 5px 0 10px;
+        }
+
+        .price {
+            color: #2563eb;
+            font-weight: bold;
+            font-size: 18px;
+        }
+
+        .quantity {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-top: 12px;
+        }
+
+        .quantity button {
+            width: 32px;
+            height: 32px;
+            border: none;
+            border-radius: 6px;
+            background: #2563eb;
+            color: white;
+            font-size: 20px;
+            cursor: pointer;
+        }
+
+        .quantity button:disabled {
+            background: #999;
+            cursor: not-allowed;
+        }
+
+        .quantity span {
+            font-weight: bold;
+            font-size: 17px;
+        }
+
+        .remove-btn {
+            background: #dc2626;
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 6px;
+            cursor: pointer;
+        }
+
+        .item-total {
+            font-weight: bold;
+            min-width: 100px;
+            text-align: center;
+        }
+
+        .grand-total {
+            text-align: right;
+            font-size: 23px;
+            font-weight: bold;
+            color: #172554;
+            margin-top: 25px;
+        }
+
+        .bottom-buttons {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 12px;
+            flex-wrap: wrap;
+            margin-top: 25px;
+        }
+
+        .continue, .checkout {
+            display: inline-block;
+            padding: 12px 20px;
+            color: white;
+            text-decoration: none;
+            border-radius: 6px;
+            font-weight: bold;
+        }
+
+        .continue {
+            background: #2563eb;
+        }
+
+        .checkout {
+            background: #16a34a;
+        }
+
+        .empty {
+            text-align: center;
+            padding: 40px 10px;
+        }
+
+        @media(max-width: 600px) {
+            body {
+                padding: 12px;
+            }
+
+            .cart-item {
+                gap: 12px;
+            }
+
+            .cart-item img {
+                width: 85px;
+                height: 85px;
+            }
+
+            .grand-total {
+                font-size: 20px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <h1>🛒 My Shopping Cart</h1>
+
+    <div class="cart-box">
+
+        {% if cart_items %}
+
+            {% for item in cart_items %}
+
+            <div class="cart-item">
+
+                <img
+                    src="{% if item.ProductName == 'USB Drive' %}{{ url_for('static', filename='images/usb-drive.jpg') }}{% elif item.ProductName == 'Laptop Stand' %}{{ url_for('static', filename='images/laptop-stand.jpg') }}{% else %}{{ item.ImageURL or 'https://placehold.co/200x150/eaf2ff/172554?text=Product' }}{% endif %}"
+                    alt="{{ item.ProductName }}"
+                    onerror="this.src='https://placehold.co/200x150/eaf2ff/172554?text=Product'">
+
+                <div class="item-details">
+
+                    <h3>{{ item.ProductName }}</h3>
+
+                    <p class="price">₹{{ item.Price }}</p>
+
+                    <div class="quantity">
+
+                        <form action="{{ url_for('decrease_quantity', cart_item_id=item.CartItemID) }}"
+                              method="POST">
+                            <button type="submit">−</button>
+                        </form>
+
+                        <span>{{ item.Quantity }}</span>
+
+                        <form action="{{ url_for('increase_quantity', cart_item_id=item.CartItemID) }}"
+                              method="POST">
+                            <button type="submit"
+                                    {% if item.Quantity >= item.Stock %}disabled{% endif %}>+</button>
+                        </form>
+
+                    </div>
+
+                </div>
+
+                <div class="item-total">
+                    ₹{{ item.Total }}
+                </div>
+
+                <form action="{{ url_for('remove_item', cart_item_id=item.CartItemID) }}"
+                      method="POST">
+
+                    <button type="submit" class="remove-btn">
+                        Remove
+                    </button>
+
+                </form>
+
+            </div>
+
+            {% endfor %}
+
+            <div class="grand-total">
+                Grand Total: ₹{{ "%.2f"|format(grand_total) }}
+            </div>
+
+            <div class="bottom-buttons">
+                <a href="/" class="continue">← Continue Shopping</a>
+                <a href="{{ url_for('checkout') }}" class="checkout">Proceed to Checkout →</a>
+            </div>
+
+        {% else %}
+
+            <div class="empty">
+                <h2>Your Cart is Empty!</h2>
+                <p>Add some electronics to your cart.</p>
+                <a href="/" class="continue">Continue Shopping</a>
+            </div>
+
+        {% endif %}
+
+    </div>
+
+</body>
+</html>

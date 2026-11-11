@@ -1,0 +1,212 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Checkout - ElectroMart</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
+        }
+
+        body {
+            margin: 0;
+            padding: 25px;
+            background: #f3f6fc;
+            color: #172554;
+        }
+
+        h1 {
+            text-align: center;
+            margin-bottom: 25px;
+        }
+
+        .checkout-container {
+            max-width: 850px;
+            margin: auto;
+        }
+
+        .section {
+            background: white;
+            padding: 25px;
+            margin-bottom: 20px;
+            border-radius: 12px;
+            box-shadow: 0 3px 12px #ddd;
+        }
+
+        h2 {
+            margin-top: 0;
+            color: #172554;
+        }
+
+        label {
+            display: block;
+            margin-top: 15px;
+            font-weight: bold;
+        }
+
+        input, textarea {
+            width: 100%;
+            padding: 12px;
+            margin-top: 7px;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+            font-size: 15px;
+        }
+
+        textarea {
+            resize: vertical;
+            min-height: 80px;
+        }
+
+        .order-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 12px 0;
+            border-bottom: 1px solid #ddd;
+            gap: 10px;
+        }
+
+        .total {
+            text-align: right;
+            font-size: 22px;
+            font-weight: bold;
+            margin-top: 20px;
+        }
+
+        .payment-option {
+            margin-top: 15px;
+        }
+
+        .payment-option input {
+            width: auto;
+        }
+
+        .place-order {
+            width: 100%;
+            padding: 15px;
+            background: #2563eb;
+            color: white;
+            border: none;
+            border-radius: 7px;
+            font-size: 18px;
+            font-weight: bold;
+            cursor: pointer;
+            margin-top: 15px;
+        }
+
+        .place-order:hover {
+            background: #172554;
+        }
+
+        .back {
+            display: inline-block;
+            margin-top: 15px;
+            color: #2563eb;
+            text-decoration: none;
+        }
+
+        @media(max-width: 600px) {
+            body {
+                padding: 12px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <h1>Checkout</h1>
+
+    <div class="checkout-container">
+
+        <form action="{{ url_for('place_order') }}" method="POST">
+
+            <!-- Customer Details -->
+            <div class="section">
+
+                <h2>Delivery Details</h2>
+
+                <label>Customer Name</label>
+                <input type="text"
+                       name="name"
+                       value="{{ customer.Name }}"
+                       required>
+
+                <label>Email</label>
+                <input type="email"
+                       name="email"
+                       value="{{ customer.Email }}"
+                       required>
+
+                <label>Phone Number</label>
+                <input type="tel"
+                       name="phone"
+                       value="{{ customer.Phone }}"
+                       required>
+
+                <label>Delivery Address</label>
+                <textarea name="address" required>{{ customer.Address }}</textarea>
+
+            </div>
+
+            <!-- Order Summary -->
+            <div class="section">
+
+                <h2>Order Summary</h2>
+
+                {% for item in cart_items %}
+
+                <div class="order-item">
+                    <span>
+                        {{ item.ProductName }} × {{ item.Quantity }}
+                    </span>
+
+                    <strong>₹{{ item.Total }}</strong>
+                </div>
+
+                {% endfor %}
+
+                <div class="total">
+                    Grand Total: ₹{{ "%.2f"|format(grand_total) }}
+                </div>
+
+            </div>
+
+            <!-- Payment -->
+            <div class="section">
+
+                <h2>Payment Method</h2>
+
+                <div class="payment-option">
+                    <label>
+                        <input type="radio"
+                               name="payment_method"
+                               value="Cash on Delivery"
+                               checked>
+                        Cash on Delivery
+                    </label>
+                </div>
+
+                <p>Payment status will be saved as Pending in the database.</p>
+
+            </div>
+
+            <button type="submit" class="place-order">
+                Place Order
+            </button>
+
+        </form>
+
+        <a href="{{ url_for('view_cart') }}" class="back">
+            ← Back to Cart
+        </a>
+
+    </div>
+
+</body>
+</html>

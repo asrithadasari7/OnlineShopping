@@ -1,0 +1,375 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ElectroMart - Online Electronics Store</title>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
+        }
+
+        body {
+            background: #f4f7fc;
+            color: #172554;
+        }
+
+        /* Navbar */
+        nav {
+            background: #172554;
+            color: white;
+            padding: 18px 6%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        nav h2 {
+            font-size: 27px;
+        }
+
+        nav a {
+            color: white;
+            text-decoration: none;
+            margin-left: 22px;
+            font-weight: bold;
+        }
+
+        nav a:hover {
+            color: #93c5fd;
+        }
+
+        /* Hero Section */
+        .hero {
+            background: linear-gradient(120deg, #172554, #2563eb);
+            color: white;
+            text-align: center;
+            padding: 65px 20px;
+        }
+
+        .hero h1 {
+            font-size: 38px;
+            margin-bottom: 15px;
+        }
+
+        .hero p {
+            font-size: 18px;
+        }
+
+        /* Search */
+        .search-section {
+            text-align: center;
+            padding: 30px 15px 10px;
+        }
+
+        .search-section input {
+            width: 80%;
+            max-width: 550px;
+            padding: 14px;
+            border: 1px solid #ccc;
+            border-radius: 25px;
+            font-size: 16px;
+            outline: none;
+        }
+
+        /* Categories */
+        .categories {
+            text-align: center;
+            padding: 20px;
+        }
+
+        .categories button {
+            background: white;
+            color: #172554;
+            border: 1px solid #2563eb;
+            padding: 10px 20px;
+            margin: 5px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        .categories button:hover,
+        .categories button.active {
+            background: #2563eb;
+            color: white;
+        }
+
+        /* Products */
+        .section-title {
+            text-align: center;
+            margin: 25px 0;
+            font-size: 28px;
+        }
+
+        .products {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 25px;
+            padding: 20px 6% 50px;
+        }
+
+        .product-card {
+            background: white;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 3px 12px rgba(0,0,0,0.08);
+            text-align: center;
+            padding-bottom: 20px;
+            transition: 0.3s;
+        }
+
+        .product-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 6px 18px rgba(0,0,0,0.15);
+        }
+
+        .product-card img {
+            width: 100%;
+            height: 190px;
+            object-fit: contain;
+            padding: 12px;
+            background: #fff;
+        }
+
+        .product-card h3 {
+            margin: 12px 5px;
+            font-size: 19px;
+        }
+
+        .price {
+            color: #2563eb;
+            font-size: 20px;
+            font-weight: bold;
+            margin: 10px;
+        }
+
+        .stock {
+            color: #64748b;
+            font-size: 14px;
+            margin-bottom: 12px;
+        }
+
+        .add-btn {
+            background: #2563eb;
+            color: white;
+            border: none;
+            padding: 11px 22px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 15px;
+        }
+
+        .add-btn:hover {
+            background: #172554;
+        }
+
+        .empty-message {
+            text-align: center;
+            grid-column: 1 / -1;
+            padding: 30px;
+            color: #64748b;
+        }
+
+        /* Footer */
+        footer {
+            background: #172554;
+            color: white;
+            text-align: center;
+            padding: 25px;
+        }
+
+        @media(max-width: 600px) {
+            nav {
+                justify-content: center;
+                text-align: center;
+            }
+
+            nav a {
+                margin: 8px;
+            }
+
+            .hero h1 {
+                font-size: 28px;
+            }
+
+            .products {
+                padding: 15px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- Navigation Bar -->
+    <nav>
+        <h2>ElectroMart ⚡</h2>
+
+        <div>
+            <a href="/">Home</a>
+            <a href="#products">Products</a>
+            <a href="#contact">Contact</a>
+            <a href="{{ url_for('view_cart') }}">🛒 View Cart</a>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <h1>Welcome to ElectroMart</h1>
+        <p>Your One-Stop Online Electronics Shopping Store</p>
+        <p>Explore the latest gadgets at affordable prices!</p>
+    </section>
+
+    <!-- Search -->
+    <section class="search-section">
+        <input
+            type="text"
+            id="searchInput"
+            placeholder="🔍 Search for electronics..."
+            onkeyup="filterProducts()">
+    </section>
+
+    <!-- Category Filters -->
+    <section class="categories">
+        <button class="active" onclick="filterCategory('All', this)">All</button>
+        <button onclick="filterCategory('Laptop', this)">Laptops</button>
+        <button onclick="filterCategory('Mobile', this)">Mobiles</button>
+        <button onclick="filterCategory('Accessories', this)">Accessories</button>
+        <button onclick="filterCategory('Other', this)">Others</button>
+    </section>
+
+    <!-- Products -->
+    <h2 class="section-title" id="products">Our Products</h2>
+
+    <div class="products" id="productContainer">
+
+        {% for product in products %}
+
+            {% if product.ProductName not in ['T-Shirt', 'Python Book'] %}
+
+            <div class="product-card"
+                 data-name="{{ product.ProductName|lower }}"
+                 data-category="{% if 'laptop' in product.ProductName|lower %}Laptop{% elif 'smartphone' in product.ProductName|lower or 'tablet' in product.ProductName|lower %}Mobile{% elif 'mouse' in product.ProductName|lower or 'keyboard' in product.ProductName|lower or 'headphone' in product.ProductName|lower or 'earbud' in product.ProductName|lower %}Accessories{% else %}Other{% endif %}">
+
+                {% if product.ProductName == 'USB Drive' %}
+                    <img src="/static/images/usb-drive.jpg"
+                         alt="USB Drive">
+
+                {% elif product.ProductName == 'Laptop Stand' %}
+                    <img src="/static/images/laptop-stand.jpg"
+                         alt="Laptop Stand">
+
+                {% else %}
+                    <img src="{{ product.ImageURL or 'https://placehold.co/300x200/eaf2ff/172554?text=Electronics' }}"
+                         alt="{{ product.ProductName }}"
+                         onerror="this.src='https://placehold.co/300x200/eaf2ff/172554?text=Electronics'">
+                {% endif %}
+
+                <h3>{{ product.ProductName }}</h3>
+
+                <p class="price">₹{{ product.Price }}</p>
+
+                <p class="stock">
+                    Available Stock: {{ product.Stock }}
+                </p>
+
+                <form action="{{ url_for('add_to_cart', product_id=product.ProductID) }}"
+                      method="POST">
+
+                    <button type="submit"
+                            class="add-btn"
+                            {% if product.Stock <= 0 %}disabled{% endif %}>
+                        {% if product.Stock > 0 %}
+                            🛒 Add to Cart
+                        {% else %}
+                            Out of Stock
+                        {% endif %}
+                    </button>
+
+                </form>
+
+            </div>
+
+            {% endif %}
+
+        {% endfor %}
+
+        <p class="empty-message" id="noProducts" style="display:none;">
+            No products found!
+        </p>
+
+    </div>
+
+    <!-- Footer -->
+    <footer id="contact">
+        <h3>ElectroMart ⚡</h3>
+        <p>Your Trusted Online Electronics Store</p>
+        <p>Contact: support@electromart.com</p>
+        <p>© 2026 ElectroMart. All Rights Reserved.</p>
+    </footer>
+
+    <!-- JavaScript -->
+    <script>
+
+        let selectedCategory = "All";
+
+        function filterProducts() {
+
+            let searchValue =
+                document.getElementById("searchInput").value.toLowerCase();
+
+            let products =
+                document.querySelectorAll(".product-card");
+
+            let visibleCount = 0;
+
+            products.forEach(function(product) {
+
+                let name = product.dataset.name;
+                let category = product.dataset.category;
+
+                let matchesSearch = name.includes(searchValue);
+
+                let matchesCategory =
+                    selectedCategory === "All" ||
+                    category === selectedCategory;
+
+                if (matchesSearch && matchesCategory) {
+                    product.style.display = "";
+                    visibleCount++;
+                } else {
+                    product.style.display = "none";
+                }
+
+            });
+
+            document.getElementById("noProducts").style.display =
+                visibleCount === 0 ? "block" : "none";
+        }
+
+        function filterCategory(category, button) {
+
+            selectedCategory = category;
+
+            document.querySelectorAll(".categories button")
+                .forEach(function(btn) {
+                    btn.classList.remove("active");
+                });
+
+            button.classList.add("active");
+
+            filterProducts();
+        }
+
+    </script>
+
+</body>
+</html>

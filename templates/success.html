@@ -1,0 +1,104 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Order Successful - ElectroMart</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
+        }
+
+        body {
+            margin: 0;
+            background: #f3f6fc;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .success-box {
+            background: white;
+            padding: 40px;
+            max-width: 550px;
+            width: 100%;
+            text-align: center;
+            border-radius: 15px;
+            box-shadow: 0 4px 15px #ddd;
+        }
+
+        .check {
+            font-size: 65px;
+            color: #16a34a;
+        }
+
+        h1 {
+            color: #15803d;
+        }
+
+        p {
+            color: #475569;
+            line-height: 1.6;
+        }
+
+        .order-details {
+            background: #f0fdf4;
+            padding: 18px;
+            border-radius: 10px;
+            margin: 25px 0;
+        }
+
+        .order-details h3 {
+            color: #166534;
+        }
+
+        .shop-btn {
+            display: inline-block;
+            background: #2563eb;
+            color: white;
+            text-decoration: none;
+            padding: 13px 25px;
+            border-radius: 7px;
+            margin-top: 15px;
+            font-weight: bold;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="success-box">
+
+        <div class="check">✔</div>
+
+        <h1>Order Placed Successfully!</h1>
+
+        <p>Thank you for shopping with ElectroMart.</p>
+
+        <p>Your order has been received successfully.</p>
+
+        <div class="order-details">
+
+            <h3>Order Details</h3>
+
+            <p><strong>Order ID:</strong> {{ order_id }}</p>
+
+            <p><strong>Total Amount:</strong> ₹{{ "%.2f"|format(grand_total) }}</p>
+
+            <p><strong>Payment Method:</strong> Cash on Delivery</p>
+
+        </div>
+
+        <p>Your order will be processed soon.</p>
+
+        <a href="/" class="shop-btn">Continue Shopping</a>
+
+    </div>
+
+</body>
+</html>
